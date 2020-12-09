@@ -29,6 +29,7 @@ namespace GoogleARCore.Examples.Common
     /// </summary>
     public class DetectedPlaneGenerator : MonoBehaviour
     {
+
         /// <summary>
         /// A prefab for tracking and visualizing detected planes.
         /// </summary>
@@ -39,6 +40,8 @@ namespace GoogleARCore.Examples.Common
         /// used across the application to avoid per-frame allocations.
         /// </summary>
         private List<DetectedPlane> _newPlanes = new List<DetectedPlane>();
+
+
 
         /// <summary>
         /// The Unity Update method.
@@ -63,6 +66,7 @@ namespace GoogleARCore.Examples.Common
                     Instantiate(DetectedPlanePrefab, Vector3.zero, Quaternion.identity, transform);
                 planeObject.GetComponent<DetectedPlaneVisualizer>().Initialize(_newPlanes[i]);
             }
+
         }
     }
 }

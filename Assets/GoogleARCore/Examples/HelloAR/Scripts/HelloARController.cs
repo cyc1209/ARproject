@@ -84,6 +84,9 @@ namespace GoogleARCore.Examples.HelloAR
         /// </summary>
         private bool _isQuitting = false;
 
+
+        public GameManager gameManager;
+
         /// <summary>
         /// The Unity Awake() method.
         /// </summary>
@@ -92,6 +95,8 @@ namespace GoogleARCore.Examples.HelloAR
             // Enable ARCore to target 60fps camera capture frame rate on supported devices.
             // Note, Application.targetFrameRate is ignored when QualitySettings.vSyncCount != 0.
             Application.targetFrameRate = 60;
+
+            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
 
         /// <summary>
@@ -118,7 +123,7 @@ namespace GoogleARCore.Examples.HelloAR
             UpdateApplicationLifecycle();
 
             // If the player has not touched the screen, we are done with this update.
-            Touch touch;
+                Touch touch;
             if (Input.touchCount < 1 || (touch = Input.GetTouch(0)).phase != TouchPhase.Began)
             {
                 return;
@@ -158,58 +163,11 @@ namespace GoogleARCore.Examples.HelloAR
                 }
                 else
                 {
+
                     if (DepthMenu != null)
                     {
                         // Show depth card window if necessary.
                         DepthMenu.ConfigureDepthBeforePlacingFirstAsset();
-                    }
-
-                    // Choose the prefab based on the Trackable that got hit.
-                    GameObject prefab;
-                    if (hit.Trackable is InstantPlacementPoint)
-                    {
-                        prefab = InstantPlacementPrefab;
-                    }
-                    else if (hit.Trackable is FeaturePoint)
-                    {
-                        prefab = GameObjectPointPrefab;
-                    }
-                    else if (hit.Trackable is DetectedPlane)
-                    {
-                        DetectedPlane detectedPlane = hit.Trackable as DetectedPlane;
-                        if (detectedPlane.PlaneType == DetectedPlaneType.Vertical)
-                        {
-                            prefab = GameObjectVerticalPlanePrefab;
-                        }
-                        else
-                        {
-                            prefab = GameObjectHorizontalPlanePrefab;
-                        }
-                    }
-                    else
-                    {
-                        prefab = GameObjectHorizontalPlanePrefab;
-                    }
-
-                    // Instantiate prefab at the hit pose.
-                    var gameObject = Instantiate(prefab, hit.Pose.position, hit.Pose.rotation);
-
-                    // Compensate for the hitPose rotation facing away from the raycast (i.e.
-                    // camera).
-                    gameObject.transform.Rotate(0, _prefabRotation, 0, Space.Self);
-
-                    // Create an anchor to allow ARCore to track the hitpoint as understanding of
-                    // the physical world evolves.
-                    var anchor = hit.Trackable.CreateAnchor(hit.Pose);
-
-                    // Make game object a child of the anchor.
-                    gameObject.transform.parent = anchor.transform;
-
-                    // Initialize Instant Placement Effect.
-                    if (hit.Trackable is InstantPlacementPoint)
-                    {
-                        gameObject.GetComponentInChildren<InstantPlacementEffect>()
-                            .InitializeWithTrackable(hit.Trackable);
                     }
                 }
             }
